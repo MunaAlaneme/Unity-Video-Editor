@@ -5,27 +5,27 @@ Unity c#
 
 MonoBehaviour Support!
 
-🎛 Timeline curves for shader params
+Timeline curves for shader params
 
-🎚 Keyframe animation system
+Keyframe animation system
 
-🎮 Scrubbable preview
+Scrubbable preview
 
-🧵 Multi-pass composition
+Multi-pass composition
 
-🧿 Audio-reactive export
+Audio-reactive export
 
-🎚 Curve editor window (graph UI)
+Curve editor window (graph UI)
 
-🎞 Shot / clip system
+Shot / clip system
 
-🧱 Node-based shader routing
+Node-based shader routing
 
-🧵 Feedback buffer trails
+Feedback buffer trails
 
-🕹 MIDI / OSC control
+MIDI / OSC control
 
-🧿 Beat detection & BPM sync
+Beat detection & BPM sync
 
 And make it support float4/vector
 
