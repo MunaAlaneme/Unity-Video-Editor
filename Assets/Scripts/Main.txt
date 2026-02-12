@@ -1,0 +1,33 @@
+The Unity Shader is done.
+Now put it all into a video editor with export button and settings.
+
+Unity c#
+
+MonoBehaviour Support!
+
+🎛 Timeline curves for shader params
+
+🎚 Keyframe animation system
+
+🎮 Scrubbable preview
+
+🧵 Multi-pass composition
+
+🧿 Audio-reactive export
+
+🎚 Curve editor window (graph UI)
+
+🎞 Shot / clip system
+
+🧱 Node-based shader routing
+
+🧵 Feedback buffer trails
+
+🕹 MIDI / OSC control
+
+🧿 Beat detection & BPM sync
+
+And make it support float4/vector
+
+AND ADD UI SUPPORT! TextMeshPro
+
