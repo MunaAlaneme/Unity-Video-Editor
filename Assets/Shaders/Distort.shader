@@ -194,6 +194,10 @@ Shader "Custom/Distort"
             {
                 return frac(sin(n) * 43758.5453);
             }
+            float RandomSigned(float n)
+            {
+                return hash(n) * 2.0 - 1.0;
+            }
             float3 RotateX(float3 p, float xy)
             {
                 float a = radians(xy);
@@ -268,42 +272,44 @@ Shader "Custom/Distort"
             
             float ShakeSignal(float t, int type, float seed)
             {
-                float v = 0;
+                float segment = floor(t);
+                float f = frac(t);
             
-                // Randomized phase & polarity
-                float phase = hash(seed * 17.23) * 10.0;
-                float flip  = lerp(-1.0, 1.0, hash(seed * 31.91));
+                // Random seeds per segment
+                float seedA = seed + segment * 17.3;
+                float seedB = seed + (segment + 1.0) * 17.3;
             
-                t += phase;
+                // Base sine phases
+                float phaseA = hash(seedA) * 6.28318;
+                float phaseB = hash(seedB) * 6.28318;
+            
+                float sineA = sin(t * 6.28318 + phaseA);
+                float sineB = sin(t * 6.28318 + phaseB);
+            
+                if (type == 1)
+                {
+                    // 🔥 Sine → Sine random lerp
+                    float u = f * f * (3.0 - 2.0 * f); // smoothstep
+                    return lerp(sineA, sineB, u);
+                }
+            
+                // ---------- Other Types ----------
+                float a = hash(segment * 13.7 + seed) * 2.0 - 1.0;
+                float b = hash((segment + 1.0) * 13.7 + seed) * 2.0 - 1.0;
             
                 if (type == 0)
                 {
-                    // Smooth Noise (unchanged randomness)
-                    float i = floor(t);
-                    float f = frac(t);
-                    float a = hash(i * 127.1 + seed);
-                    float b = hash((i + 1.0) * 127.1 + seed);
                     float u = f * f * (3.0 - 2.0 * f);
-                    v = lerp(a, b, u);
-                }
-                else if (type == 1)
-                {
-                    // Sine (seeded phase)
-                    v = sin(t * radians(180) * 2.0);
+                    return lerp(a, b, u);
                 }
                 else if (type == 2)
                 {
-                    // Square (seeded phase)
-                    v = step(0.0, sin(t * radians(180) * 2.0));
+                    return (f < 0.5) ? a : b;
                 }
                 else
                 {
-                    // Linear (seeded saw)
-                    v = frac(t);
+                    return lerp(a, b, f);
                 }
-            
-                // Normalize to -1 → 1
-                return (v * 2.0 - 1.0) * flip;
             }
 
             fixed4 frag (v2f i) : SV_Target

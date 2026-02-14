@@ -86,8 +86,8 @@ Material:
     - _FlyEyeStrength: 0
     - _Frequency: 10
     - _GlitchBlockSize: 40
-    - _GlitchRGB: 0
-    - _GlitchRGBRotation: 90
+    - _GlitchRGB: 0.1
+    - _GlitchRGBRotation: 1481.22
     - _GlitchSpeed: 10
     - _GlitchStrength: 0
     - _GlossMapScale: 1
@@ -104,7 +104,7 @@ Material:
     - _Parallax: 0.02
     - _PerspDepth: 1
     - _PerspFOV: 1
-    - _PerspPitch: 135
+    - _PerspPitch: 0
     - _PerspPosX: 0
     - _PerspPosY: 0
     - _PerspPosZ: 0
@@ -125,9 +125,9 @@ Material:
     - _ShakeRot: 0.02
     - _ShakeScale: 0
     - _ShakeSeed: 69420
-    - _ShakeSpeed: 20
+    - _ShakeSpeed: 2
     - _ShakeStrength: 1
-    - _ShakeType: 0
+    - _ShakeType: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 1
