@@ -86,8 +86,8 @@ Material:
     - _FlyEyeStrength: 0
     - _Frequency: 10
     - _GlitchBlockSize: 40
-    - _GlitchRGB: 0.1
-    - _GlitchRGBRotation: 1481.22
+    - _GlitchRGB: 0
+    - _GlitchRGBRotation: 0
     - _GlitchSpeed: 10
     - _GlitchStrength: 0
     - _GlossMapScale: 1
@@ -96,8 +96,8 @@ Material:
     - _HorizonHeight: 0.5
     - _HorizonWarp: 0
     - _MagnifyAmount: 1
-    - _MagnifyRadius: 0
-    - _MagnifySoftness: 0.25
+    - _MagnifyRadius: 0.5
+    - _MagnifySoftness: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -117,16 +117,19 @@ Material:
     - _PolarBlend: 0
     - _PolarRadius: 1
     - _RippleFalloff: 0
-    - _RippleFrequency: 0
+    - _RippleFrequency: 10
     - _RippleSpeed: 10
     - _RippleStrength: 0
     - _Scale: 0.03
+    - _SceneRotX: 0
+    - _SceneRotY: 0
+    - _SceneRotZ: 0
     - _ShakePos: 0.1
     - _ShakeRot: 0.02
     - _ShakeScale: 0
-    - _ShakeSeed: 69420
+    - _ShakeSeed: 0
     - _ShakeSpeed: 2
-    - _ShakeStrength: 1
+    - _ShakeStrength: 0
     - _ShakeType: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -135,11 +138,19 @@ Material:
     - _SpeedY: 3
     - _SrcBlend: 1
     - _SwirlRadius: 5
-    - _SwirlStrength: 0
+    - _SwirlStrength: 28.541672
     - _TileModeX: 1
     - _TileModeY: 1
     - _TileX: 5
     - _TileY: 5
+    - _TinyPlanet2_Height: 0
+    - _TinyPlanet2_Radius: 0
+    - _TinyPlanet2_Rotation: 0
+    - _TinyPlanet2_Tilt: 0
+    - _TinyPlanet2_Zoom: 1
+    - _TinyPlanetRotation: 0
+    - _TinyPlanetStrength: 0
+    - _TinyPlanetZoom: 1
     - _TrailEndAlpha: 1
     - _TrailEndRot: 0
     - _TrailEndSize: 1
@@ -152,6 +163,16 @@ Material:
     - _TrailStrength: 0
     - _TrailTransformRot: 0
     - _TrailTransformScale: 0
+    - _TunnelBoolean: 0
+    - _TunnelCrop: 2
+    - _TunnelDepth: 0.25
+    - _TunnelFog: 2
+    - _TunnelMirror: 1
+    - _TunnelPhase: 0
+    - _TunnelRotation: 0
+    - _TunnelTwirl: 0
+    - _TunnelWrap: 2
+    - _TunnelZoom: 1
     - _UVSec: 0
     - _Wave1Angle: 0
     - _Wave1Disp: 1
@@ -171,10 +192,13 @@ Material:
     - _RippleCenter: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _ShakeCenter: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _SwirlCenter: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _TinyPlanet2_Center: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _TinyPlanetCenter: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _TrailDirection: {r: 1, g: 0, b: 0, a: 0}
-    - _Wave: {r: 0, g: 25, b: 0, a: 0}
-    - _Wave1: {r: 0, g: 10, b: 1, a: 0}
-    - _Wave2: {r: 0, g: 10, b: 1, a: 0}
+    - _TunnelFogColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Wave: {r: 1.9416668, g: 194.16669, b: 10, a: 0}
+    - _Wave1: {r: 0, g: 25, b: 10, a: 0}
+    - _Wave2: {r: 0, g: 25, b: 10, a: 0}
     - _WaveAngles: {r: 90, g: 90, b: 90, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

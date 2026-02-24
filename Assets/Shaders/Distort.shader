@@ -81,10 +81,43 @@ Shader "Custom/Distort"
         
         _ShakeType ("Shake Type (0 Noise, 1 Sine, 2 Square, 3 Linear)", Int) = 0
         _ShakeSeed ("Shake Random Seed", Float) = 0
+        
+        _TunnelPhase ("Tunnel Phase", Float) = 0
+        _TunnelDepth ("Tunnel Depth", Range(0.01,10)) = 0.3
+        _TunnelTwirl ("Tunnel Twirl (Degrees)", Float) = 0
+        _TunnelWrap ("Tunnel Wrap", Range(1,8)) = 2
+        _TunnelBoolean ("Tunnel?", Range(0,1)) = 1
+        
+        _TunnelMirror ("Tunnel Mirror (0 Off, 1 On)", Float) = 1
+        
+        _TinyPlanetStrength ("Tiny Planet Strength", Float) = 1
+        _TinyPlanetRotation ("Tiny Planet Rotation", Float) = 0
+        _TinyPlanetZoom ("Tiny Planet Zoom", Float) = 1
+        _TinyPlanetCenter ("Tiny Planet Center (UV)", Vector) = (0.5,0.5,0,0)
+        
+        _TinyPlanet2_Radius ("Tiny Planet 2 Radius", Float) = 1.0
+        _TinyPlanet2_Height ("Tiny Planet 2 Camera Height", Float) = 2.5
+        _TinyPlanet2_Rotation ("Tiny Planet 2 Longitude Rotation", Float) = 0
+        _TinyPlanet2_Tilt ("Tiny Planet 2 Latitude Tilt", Float) = 0
+        _TinyPlanet2_Zoom ("Tiny Planet 2 Zoom", Float) = 1.0
+        _TinyPlanet2_Center ("Tiny Planet 2 Center", Vector) = (0.5,0.5,0,0)
+        
+        _SceneRotX ("Scene Rotation X (Pitch)", Float) = 0
+        _SceneRotY ("Scene Rotation Y (Yaw)", Float) = 0
+        _SceneRotZ ("Scene Rotation Z (Roll)", Float) = 0
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "Queue"="Transparent"
+            "RenderType"="Transparent"
+        }
+        
+        Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
+        Cull Off
+        
         Pass
         {
             HLSLPROGRAM
@@ -171,6 +204,29 @@ Shader "Custom/Distort"
             int _ShakeType;
             float _ShakeSeed;
             
+            float _TunnelPhase;
+            float _TunnelDepth;
+            float _TunnelTwirl;
+            float _TunnelWrap;
+            
+            float _TunnelMirror;
+            int _TunnelBoolean;
+            
+            float _TinyPlanetStrength;
+            float _TinyPlanetRotation;
+            float _TinyPlanetZoom;
+            float4 _TinyPlanetCenter;
+            float _TinyPlanet2_Radius;
+            float _TinyPlanet2_Height;
+            float _TinyPlanet2_Rotation;
+            float _TinyPlanet2_Tilt;
+            float _TinyPlanet2_Zoom;
+            float4 _TinyPlanet2_Center;
+            
+            float _SceneRotX;
+            float _SceneRotY;
+            float _SceneRotZ;
+            
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -190,6 +246,17 @@ Shader "Custom/Distort"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }
+            
+            float2 RotateCoord(float2 st, float angle)
+            {
+                float s = sin(angle);
+                float c = cos(angle);
+                return float2(
+                    st.x * c - st.y * s,
+                    st.x * s + st.y * c
+                );
+            }
+
             float hash(float n)
             {
                 return frac(sin(n) * 43758.5453);
@@ -197,6 +264,70 @@ Shader "Custom/Distort"
             float RandomSigned(float n)
             {
                 return hash(n) * 2.0 - 1.0;
+            }
+            
+            float3 UVToDir(float2 uv)
+            {
+                float longitude = (uv.x - 0.5) * 2.0 * UNITY_PI;
+                float latitude  = (uv.y - 0.5) * UNITY_PI;
+            
+                float3 dir;
+                dir.x = cos(latitude) * sin(longitude);
+                dir.y = sin(latitude);
+                dir.z = cos(latitude) * cos(longitude);
+            
+                return dir;
+            }
+            float3 RotateXYZ(float3 v, float3 r)
+            {
+                // X (Pitch)
+                float cx = cos(r.x);
+                float sx = sin(r.x);
+                v = float3(
+                    v.x,
+                    v.y * cx - v.z * sx,
+                    v.y * sx + v.z * cx
+                );
+            
+                // Y (Yaw)
+                float cy = cos(r.y);
+                float sy = sin(r.y);
+                v = float3(
+                    v.x * cy + v.z * sy,
+                    v.y,
+                   -v.x * sy + v.z * cy
+                );
+            
+                // Z (Roll)
+                float cz = cos(r.z);
+                float sz = sin(r.z);
+                v = float3(
+                    v.x * cz - v.y * sz,
+                    v.x * sz + v.y * cz,
+                    v.z
+                );
+            
+                return v;
+            }
+            float2 DirToUV(float3 dir)
+            {
+                float longitude = atan2(dir.x, dir.z);
+                float latitude  = asin(dir.y);
+            
+                float2 uv;
+                uv.x = longitude / (2.0 * UNITY_PI) + 0.5;
+                uv.y = latitude / UNITY_PI + 0.5;
+            
+                return uv;
+            }
+            float2 VR360RotateUV(float2 uv)
+            {
+                float3 dir = UVToDir(uv);
+            
+                float3 rot = radians(float3(_SceneRotX, _SceneRotY, _SceneRotZ));
+                dir = RotateXYZ(dir, rot);
+            
+                return DirToUV(normalize(dir));
             }
             float3 RotateX(float3 p, float xy)
             {
@@ -311,11 +442,123 @@ Shader "Custom/Distort"
                     return lerp(a, b, f);
                 }
             }
+            
+            float2 TinyPlanetUV(float2 uv)
+            {
+                // Normalize around center
+                float2 p = uv - _TinyPlanetCenter.xy;
+            
+                // Convert to polar
+                float angle = atan2(p.y, p.x) + _TinyPlanetRotation;
+                float radius = length(p);
+            
+                // Polar UV
+                float2 polarUV;
+                polarUV.x = angle / (radians(180)*2) + 0.5;
+                polarUV.y = radius * _TinyPlanetZoom;
+            
+                // Wrap horizontally
+                polarUV.x = frac(polarUV.x);
+            
+                // Invert radius (planet effect)
+                polarUV.y = 1.0 - polarUV.y;
+            
+                // Blend with original UV
+                return lerp(uv, polarUV, _TinyPlanetStrength);
+            }
+            
+            bool RaySphereIntersect(
+                float3 ro, float3 rd,
+                float radius,
+                out float t
+            ){
+                float b = dot(ro, rd);
+                float c = dot(ro, ro) - radius * radius;
+                float h = b * b - c;
+                if (h < 0.0) return false;
+                h = sqrt(h);
+                t = -b - h;
+                return t > 0.0;
+            }
+            
+            float2 SphereUV(float3 p)
+            {
+                float longitude = atan2(p.z, p.x);
+                float latitude  = asin(p.y);
+            
+                float2 uv;
+                uv.x = longitude / (2.0 * UNITY_PI) + 0.5;
+                uv.y = latitude / UNITY_PI + 0.5;
+            
+                return uv;
+            }
+            
+            float2 TinyPlanet2UV(float2 uv)
+            {
+                // Screen → NDC
+                float2 p = (uv - _TinyPlanet2_Center.xy) * 2.0;
+                p *= _TinyPlanet2_Zoom;
+                
+                // Camera
+                float3 ro = float3(0, _TinyPlanet2_Height, 0);
+                float3 rd = normalize(float3(p.x, -1.0, p.y));
+            
+                // Tilt (latitude rotation)
+                float ct = cos(_TinyPlanet2_Tilt);
+                float st = sin(_TinyPlanet2_Tilt);
+                rd = float3(
+                    rd.x,
+                    rd.y * ct - rd.z * st,
+                    rd.y * st + rd.z * ct
+                );
+            
+                // Sphere intersection
+                float t;
+                if (!RaySphereIntersect(ro, rd, _TinyPlanet2_Radius, t))
+                    return uv; // outside planet
+            
+                float3 hit = ro + rd * t;
+            
+                // Longitude rotation
+                float cl = cos(_TinyPlanet2_Rotation);
+                float sl = sin(_TinyPlanet2_Rotation);
+                hit.xz = float2(
+                    hit.x * cl - hit.z * sl,
+                    hit.x * sl + hit.z * cl
+                );
+            
+                return SphereUV(normalize(hit));
+            }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv;
+                float2 uv1 = uv*2 - 1;                
+                // Twirl logic
+                float Tunnelangle = atan2(uv1.y, uv1.x);
+                float Tunnelradius = length(uv1);
+                Tunnelangle += _TunnelTwirl * radians(1) * Tunnelradius;
                 
+                // Apply distortion based on parameters
+                uv1 = float2(_TunnelDepth / Tunnelradius + _TunnelPhase, Tunnelangle / (radians(180) * 2.0 / _TunnelWrap));
+                
+                // Mirror effect if applicable
+                if (_TunnelMirror >= 0.5)
+                {
+                    uv1 = abs(frac(uv1) * 2.0 - 1.0);
+                }
+                else
+                {
+                    uv1 = frac(uv1);
+                }
+                if (_TunnelBoolean >= 0.5)
+                {
+                    uv = uv1;
+                }
+                
+                uv = TinyPlanetUV(uv);
+                uv = TinyPlanet2UV(uv);
+                uv = VR360RotateUV(uv);
                 // ---------- Shake ----------
                 float time = _Time.y * _ShakeSpeed;
                 
