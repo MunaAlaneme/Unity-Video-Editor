@@ -82,6 +82,13 @@ Shader "Custom/Distort"
         _ShakeType ("Shake Type (0 Noise, 1 Sine, 2 Square, 3 Linear)", Int) = 0
         _ShakeSeed ("Shake Random Seed", Float) = 0
         
+        _DistortedBlobMag ("DistortedBlob Magnitude", Float) = 50
+        _DistortedBlobSpeed ("DistortedBlob Speed", Float) = 1
+        _DistortedBlobEvolution ("DistortedBlob Evolution", Float) = 0
+        _DistortedBlobSeed ("DistortedBlob Seed", Float) = 0
+        _DistortedBlobAngle ("DistortedBlob Angle (Degrees)", Float) = 45
+        _DistortedBlobSlack ("DistortedBlob Slack", Range(0,1)) = 0.25
+        
         _TunnelPhase ("Tunnel Phase", Float) = 0
         _TunnelDepth ("Tunnel Depth", Range(0.01,10)) = 0.3
         _TunnelTwirl ("Tunnel Twirl (Degrees)", Float) = 0
@@ -105,6 +112,54 @@ Shader "Custom/Distort"
         _SceneRotX ("Scene Rotation X (Pitch)", Float) = 0
         _SceneRotY ("Scene Rotation Y (Yaw)", Float) = 0
         _SceneRotZ ("Scene Rotation Z (Roll)", Float) = 0
+        
+        _JitterAngle ("Jitter Angle (Degrees)", Float) = 45
+        _JitterFreq ("Jitter Frequency", Float) = 30
+        _JitterMag ("Jitter Magnitude (Pixels)", Float) = 25
+        _JitterSeed ("Jitter Seed", Float) = 0
+        _JitterSlack ("Jitter Slack", Range(0,1)) = 0
+        _JitterZ ("Jitter Z", Float) = 0
+        
+        _DistortedBlob2Mag ("Distorted Blob 2 Magnitude (Pixels)", Float) = 50
+        _DistortedBlob2Evolution ("Distorted Blob 2 Evolution", Float) = 0
+        _DistortedBlob2Seed ("Distorted Blob 2 Seed", Float) = 0
+        _DistortedBlob2Scatter ("Distorted Blob 2 Scatter", Range(0,2)) = 0.5
+        
+        _OscAngle ("Oscillate Angle (Degrees)", Float) = 45
+        _OscFreq ("Oscillate Frequency", Float) = 2.0
+        _OscMag ("Oscillate Magnitude (Pixels)", Float) = 25
+        _OscType ("Oscillate Wave Type (0=Sine, 1=Triangle)", Float) = 0
+        
+        _Shake2Mag ("Shake 2 Magnitude (Pixels)", Float) = 50
+        _Shake2Freq ("Shake 2 Frequency", Float) = 2.0
+        _Shake2Evolution ("Shake 2 Evolution", Float) = 0
+        _Shake2Seed ("Shake 2 Seed", Float) = 0
+        _Shake2Angle ("Shake 2 Angle (Degrees)", Float) = 45
+        _Shake2Slack ("Shake 2 Slack", Range(0,1)) = 0.25
+        _Shake2Z ("Shake 2 Z Shake", Float) = 0
+        _Shake2Speed ("Shake 2 Speed", Float) = 2
+        _Shake2RotMag ("Shake 2 Rotation Magnitude (Degrees)", Float) = 0
+        _Shake2RotSeed ("Shake 2 Rotation Seed Offset", Float) = 12.37
+        
+        _MirrorEnable ("Mirror Enable", Float) = 1
+        _MirrorAngle ("Mirror Angle (Degrees)", Float) = 0
+        _MirrorInvert ("Mirror Invert Side (0/1)", Float) = 0
+        _Mirror2Enable ("Mirror2 Enable", Float) = 1
+        _Mirror2Angle ("Mirror2 Angle (Degrees)", Float) = 0
+        _Mirror2Invert ("Mirror2 Invert Side (0/1)", Float) = 0
+        _Mirror3Enable ("Mirror3 Enable", Float) = 1
+        _Mirror3Angle ("Mirror3 Angle (Degrees)", Float) = 0
+        _Mirror3Invert ("Mirror3 Invert Side (0/1)", Float) = 0
+        _Mirror4Enable ("Mirror4 Enable", Float) = 1
+        _Mirror4Angle ("Mirror4 Angle (Degrees)", Float) = 0
+        _Mirror4Invert ("Mirror4 Invert Side (0/1)", Float) = 0
+        
+        _KaleidoEnable ("Kaleidoscope Enable", Float) = 1
+        _KaleidoMode ("Kaleidoscope Mode (0=Polar,1=Octagon,2=Square,3=Triangle)", Float) = 0
+        _KaleidoCount ("Kaleidoscope Mirror Count", Float) = 10   // keep 10, but flexible
+        _KaleidoRotation ("Kaleidoscope Rotation (Degrees)", Float) = 0
+        _KaleidoScale ("Kaleidoscope Scale", Float) = 1
+        _KaleidoInvert ("Kaleidoscope Invert", Float) = 0
     }
     SubShader
     {
@@ -226,6 +281,61 @@ Shader "Custom/Distort"
             float _SceneRotX;
             float _SceneRotY;
             float _SceneRotZ;
+            
+            float _DistortedBlobMag;
+            float _DistortedBlobSpeed;
+            float _DistortedBlobEvolution;
+            float _DistortedBlobSeed;
+            float _DistortedBlobAngle;
+            float _DistortedBlobSlack;
+            
+            float _JitterAngle;
+            float _JitterFreq;
+            float _JitterMag;
+            float _JitterSeed;
+            float _JitterSlack;
+            float _JitterZ;
+            
+            float _DistortedBlob2Mag;
+            float _DistortedBlob2Evolution;
+            float _DistortedBlob2Seed;
+            float _DistortedBlob2Scatter;
+            
+            float _OscAngle;
+            float _OscFreq;
+            float _OscMag;
+            float _OscType;
+            
+            float _Shake2Mag;
+            float _Shake2Freq;
+            float _Shake2Evolution;
+            float _Shake2Seed;
+            float _Shake2Angle;
+            float _Shake2Slack;
+            float _Shake2Z;
+            float _Shake2Speed;
+            float _Shake2RotMag;
+            float _Shake2RotSeed;
+            
+            float _MirrorEnable;
+            float _MirrorAngle;
+            float _MirrorInvert;
+            float _Mirror2Enable;
+            float _Mirror2Angle;
+            float _Mirror2Invert;
+            float _Mirror3Enable;
+            float _Mirror3Angle;
+            float _Mirror3Invert;
+            float _Mirror4Enable;
+            float _Mirror4Angle;
+            float _Mirror4Invert;
+            
+            float _KaleidoEnable;
+            float _KaleidoCount;
+            float _KaleidoRotation;
+            float _KaleidoInvert;
+            float _KaleidoMode;
+            float _KaleidoScale;
             
             struct appdata
             {
@@ -529,6 +639,495 @@ Shader "Custom/Distort"
             
                 return SphereUV(normalize(hit));
             }
+            
+            float3 mod289(float3 x) { return x - floor(x / 289.0) * 289.0; }
+            float4 mod289(float4 x) { return x - floor(x / 289.0) * 289.0; }
+            
+            float4 permute(float4 x) { return mod289((x * 34.0 + 1.0) * x); }
+            
+            float snoise(float3 v)
+            {
+                const float2 C = float2(1.0 / 6.0, 1.0 / 3.0);
+                const float4 D = float4(0.0, 0.5, 1.0, 2.0);
+            
+                float3 i = floor(v + dot(v, C.yyy));
+                float3 x0 = v - i + dot(i, C.xxx);
+            
+                float3 g = step(x0.yzx, x0.xyz);
+                float3 l = 1.0 - g;
+                float3 i1 = min(g.xyz, l.zxy);
+                float3 i2 = max(g.xyz, l.zxy);
+            
+                float3 x1 = x0 - i1 + C.xxx;
+                float3 x2 = x0 - i2 + C.yyy;
+                float3 x3 = x0 - D.yyy;
+            
+                i = mod289(i);
+                float4 p = permute(
+                    permute(permute(i.z + float4(0.0, i1.z, i2.z, 1.0))
+                    + i.y + float4(0.0, i1.y, i2.y, 1.0))
+                    + i.x + float4(0.0, i1.x, i2.x, 1.0)
+                );
+            
+                float4 j = p - 49.0 * floor(p / 49.0);
+                float4 x_ = floor(j / 7.0);
+                float4 y_ = floor(j - 7.0 * x_);
+            
+                float4 x = (x_ * 2.0 + 1.0) / 7.0 - 1.0;
+                float4 y = (y_ * 2.0 + 1.0) / 7.0 - 1.0;
+            
+                float4 h = 1.0 - abs(x) - abs(y);
+                float4 b0 = float4(x.xy, y.xy);
+                float4 b1 = float4(x.zw, y.zw);
+            
+                float4 s0 = floor(b0) * 2.0 + 1.0;
+                float4 s1 = floor(b1) * 2.0 + 1.0;
+                float4 sh = -step(h, 0.0);
+            
+                float4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+                float4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+            
+                float3 g0 = float3(a0.xy, h.x);
+                float3 g1 = float3(a0.zw, h.y);
+                float3 g2 = float3(a1.xy, h.z);
+                float3 g3 = float3(a1.zw, h.w);
+            
+                float4 norm = rsqrt(float4(
+                    dot(g0, g0), dot(g1, g1),
+                    dot(g2, g2), dot(g3, g3)
+                ));
+                g0 *= norm.x;
+                g1 *= norm.y;
+                g2 *= norm.z;
+                g3 *= norm.w;
+            
+                float4 m = max(0.6 - float4(
+                    dot(x0, x0), dot(x1, x1),
+                    dot(x2, x2), dot(x3, x3)
+                ), 0.0);
+                m = m * m;
+            
+                return 42.0 * dot(m * m, float4(
+                    dot(g0, x0), dot(g1, x1),
+                    dot(g2, x2), dot(g3, x3)
+                ));
+            }
+            
+            float2 DistortedBlobUV(float2 uv)
+            {
+                float time = _DistortedBlobEvolution + (_Time.y * _DistortedBlobSpeed) - _DistortedBlobSpeed;
+            
+                float angle = radians(_DistortedBlobAngle);
+                float s = sin(angle);
+                float c = cos(angle);
+            
+                float dx = snoise(float3(
+                    uv.x + _DistortedBlobSeed * 54623.245,
+                    uv.y,
+                    time + _DistortedBlobSeed * 49235.3198
+                ));
+            
+                float dy = snoise(float3(
+                    uv.x,
+                    uv.y + _DistortedBlobSeed * 8723.5647,
+                    time + 7468.329 + _DistortedBlobSeed * 19337.9404
+                ));
+            
+                dx *= _DistortedBlobMag;
+                dy *= _DistortedBlobMag * _DistortedBlobSlack;
+            
+                float rx = dx * c - dy * s;
+                float ry = dx * s + dy * c;
+            
+                // Convert pixel shake → UV space
+                return uv + float2(rx, ry) / _ScreenParams.xy;
+            }
+            
+            float JitterTime()
+            {
+                float t = _Time.y;
+                float step = 1.0 / max(_JitterFreq, 0.0001);
+                return t - fmod(t, step);
+            }
+            
+            float2 JitterUV(float2 uv)
+            {
+                float t = JitterTime();
+            
+                float angle = radians(_JitterAngle);
+                float s = sin(angle);
+                float c = cos(angle);
+            
+                // Primary jitter
+                float m = snoise(float3(
+                    t * 637.729,
+                    0,
+                    _JitterSeed * 394.417
+                ));
+            
+                float2 offset;
+                offset.x = s * _JitterMag * m;
+                offset.y = c * _JitterMag * m;
+            
+                // Slack (perpendicular jitter)
+                if (_JitterSlack > 0.001)
+                {
+                    float a2 = angle + UNITY_PI * 0.5;
+                    float m2 = snoise(float3(
+                        t * 951.217 + 149.231,
+                        0,
+                        _JitterSeed * 894.417 + 2773.908
+                    ));
+            
+                    offset.x += sin(a2) * _JitterMag * m2 * _JitterSlack;
+                    offset.y += cos(a2) * _JitterMag * m2 * _JitterSlack;
+                }
+            
+                // Convert pixels → UV
+                return uv + offset / _ScreenParams.xy;
+            }
+            
+            float JitterZScale()
+            {
+                if (_JitterZ <= 0) return 1.0;
+            
+                float t = JitterTime();
+                float zm = snoise(float3(
+                    t * 637.729 + 241.386,
+                    0,
+                    _JitterSeed * 394.417 + 1729.361
+                ));
+            
+                return 1.0 + zm * (_JitterZ * 0.001);
+            }
+            
+            float2 RandomDisplaceUV(float2 uv)
+            {
+                // Convert UV → pixel space for spatial coherence
+                float2 px = uv * _ScreenParams.xy;
+            
+                float dx = snoise(float3(
+                    px.x * _DistortedBlob2Scatter / 50.0 + _DistortedBlob2Seed * 54623.245,
+                    px.y * _DistortedBlob2Scatter / 500.0,
+                    _DistortedBlob2Evolution + _DistortedBlob2Seed * 49235.3198
+                ));
+            
+                float dy = snoise(float3(
+                    px.x * _DistortedBlob2Scatter / 50.0,
+                    px.y * _DistortedBlob2Scatter / 500.0 + _DistortedBlob2Seed * 8723.5647,
+                    _DistortedBlob2Evolution + 7468.329 + _DistortedBlob2Seed * 19337.9404
+                ));
+            
+                float2 offset = float2(dx, dy) * _DistortedBlob2Mag;
+            
+                // Convert pixels → UV
+                return uv + offset / _ScreenParams.xy;
+            }
+            
+            float TriangleWave(float x)
+            {
+                return abs(frac(x) * 2.0 - 1.0) * 2.0 - 1.0;
+            }
+            
+            float2 OscillateUV(float2 uv)
+            {
+                float angle = radians(_OscAngle);
+            
+                float2 dir = float2(
+                    sin(angle),
+                    cos(angle)
+                );
+            
+                float t = _Time.y;
+            
+                float phase;
+                if (_OscType < 0.5)
+                {
+                    // Sine
+                    phase = sin(t * _OscFreq * UNITY_PI);
+                }
+                else
+                {
+                    // Triangle
+                    phase = TriangleWave(t * _OscFreq * 0.5);
+                }
+            
+                float2 offset = dir * _OscMag * phase;
+            
+                // Convert pixels → UV
+                return uv + offset / _ScreenParams.xy;
+            }
+            
+            // ------------------------------------------------------------
+            // 2D Simplex Noise
+            // ------------------------------------------------------------
+            
+            float2 mod289X2(float2 x)
+            {
+                return x - floor(x / 289.0) * 289.0;
+            }
+            
+            float3 mod289X3(float3 x)
+            {
+                return x - floor(x / 289.0) * 289.0;
+            }
+            
+            float3 permute(float3 x)
+            {
+                return mod289X3((x * 34.0 + 1.0) * x);
+            }
+            
+            float snoise2(float2 v)
+            {
+                const float4 C = float4(
+                    0.211324865405187,   // (3.0 - sqrt(3.0)) / 6.0
+                    0.366025403784439,   // 0.5 * (sqrt(3.0) - 1.0)
+                   -0.577350269189626,   // -1.0 + 2.0 * C.x
+                    0.024390243902439    // 1.0 / 41.0
+                );
+            
+                // First corner
+                float2 i = floor(v + dot(v, C.yy));
+                float2 x0 = v - i + dot(i, C.xx);
+            
+                // Other corners
+                float2 i1 = (x0.x > x0.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
+            
+                float4 x12 = float4(
+                    x0.xy - i1 + C.xx,
+                    x0.xy + C.zz
+                );
+            
+                // Permutations
+                i = mod289X2(i);
+                float3 p = permute(
+                    permute(i.y + float3(0.0, i1.y, 1.0)) +
+                    i.x + float3(0.0, i1.x, 1.0)
+                );
+            
+                // Gradients
+                float3 m = max(
+                    0.5 - float3(
+                        dot(x0, x0),
+                        dot(x12.xy, x12.xy),
+                        dot(x12.zw, x12.zw)
+                    ),
+                    0.0
+                );
+            
+                m = m * m;
+                m = m * m;
+            
+                float3 x = 2.0 * frac(p * C.www) - 1.0;
+                float3 h = abs(x) - 0.5;
+                float3 ox = floor(x + 0.5);
+                float3 a0 = x - ox;
+            
+                m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+            
+                float3 g;
+                g.x = a0.x * x0.x + h.x * x0.y;
+                g.y = a0.y * x12.x + h.y * x12.y;
+                g.z = a0.z * x12.z + h.z * x12.w;
+            
+                return 130.0 * dot(m, g);
+            }
+            
+            float Shake2Phase()
+            {
+                return _Shake2Evolution + _Shake2Freq + (_Shake2Speed*_Time.y);
+            }
+            
+            float2 Shake2UV(float2 uv)
+            {
+                float phase = Shake2Phase();
+            
+                float angle = radians(_Shake2Angle);
+                float s = sin(angle);
+                float c = cos(angle);
+            
+                float dx = snoise2(float2(
+                    phase,
+                    _Shake2Seed * 49235.3198
+                ));
+            
+                float dy = snoise2(float2(
+                    phase + 7468.329,
+                    _Shake2Seed * 19337.9404
+                ));
+            
+                dx *= _Shake2Mag;
+                dy *= _Shake2Mag * _Shake2Slack;
+            
+                float rx = dx * c - dy * s;
+                float ry = dx * s + dy * c;
+            
+                return uv + float2(rx, ry) / _ScreenParams.xy;
+            }
+            
+            float Shake2ZScale()
+            {
+                if (_Shake2Z <= 0) return 1.0;
+            
+                float phase = Shake2Phase();
+            
+                float dz = snoise2(float2(
+                    phase + 14192.277,
+                    _Shake2Seed * 71401.1685
+                ));
+            
+                return 1.0 + dz * (_Shake2Z * 0.001);
+            }
+            float2 RotateUV(float2 uv, float angle)
+            {
+                float s = sin(angle);
+                float c = cos(angle);
+            
+                uv -= 0.5;
+                uv = float2(
+                    uv.x * c - uv.y * s,
+                    uv.x * s + uv.y * c
+                );
+                uv += 0.5;
+            
+                return uv;
+            }
+            
+            float Shake2Rotation()
+            {
+                if (_Shake2RotMag == 0) return 0;
+            
+                float phase = _Shake2Evolution + _Shake2Freq + (_Shake2Speed*_Time.y);
+            
+                float r = snoise2(float2(
+                    phase + 9821.441,
+                    _Shake2Seed * 91327.553 + _Shake2RotSeed
+                ));
+            
+                return radians(r * _Shake2RotMag);
+            }
+            
+            float2 MirrorUV(float2 uv, float angle, float enable, float invert)
+            {
+                if (enable < 0.5)
+                    return uv;
+            
+                float angle1 = radians(angle);
+            
+                // Rotate into mirror space
+                float2 p = RotateUV(uv, -angle1);
+            
+                // Centered coordinates
+                float2 c = p - 0.5;
+            
+                // Choose side
+                float side = (c.x >= 0.0) ? 1.0 : 0.0;
+                if (invert > 0.5)
+                    side = 1.0 - side;
+            
+                // Reflect chosen side
+                if (side > 0.5)
+                    c.x = -c.x;
+            
+                // Back to UV
+                p = c + 0.5;
+            
+                // Rotate back
+                return RotateUV(p, angle1);
+            }
+            
+            float2 Rotate2D(float2 p, float a)
+            {
+                float s = sin(a);
+                float c = cos(a);
+                return float2(p.x * c - p.y * s, p.x * s + p.y * c);
+            }
+            
+            float2 Fold(float2 p)
+            {
+                return abs(p);
+            }
+            
+            float2 KaleidoPolar(float2 uv)
+            {
+                float2 p = (uv - 0.5) * _KaleidoScale;
+                float r = length(p);
+                float a = atan2(p.y, p.x) + radians(_KaleidoRotation);
+            
+                float slices = max(1.0, _KaleidoCount);
+                float slice = 2.0 * UNITY_PI / slices;
+            
+                a = fmod(a, slice);
+                a = abs(a - slice * 0.5);
+            
+                if (_KaleidoInvert > 0.5)
+                    a = slice * 0.5 - a;
+            
+                return float2(cos(a), sin(a)) * r + 0.5;
+            }
+            
+            float2 KaleidoOctagon(float2 uv)
+            {
+                float2 p = (uv - 0.5) * _KaleidoScale;
+                p = Rotate2D(p, radians(_KaleidoRotation));
+            
+                p = abs(p);
+            
+                float k = 0.70710678; // sqrt(2)/2
+                if (p.x + p.y > k)
+                    p = float2(p.y, p.x);
+            
+                if (_KaleidoInvert > 0.5)
+                    p = -p;
+            
+                return p + 0.5;
+            }
+            
+            float2 KaleidoSquare(float2 uv)
+            {
+                float2 p = (uv - 0.5) * _KaleidoScale;
+                p = Rotate2D(p, radians(_KaleidoRotation));
+            
+                p = abs(frac(p + 0.5) - 0.5);
+            
+                if (_KaleidoInvert > 0.5)
+                    p = -p;
+            
+                return p + 0.5;
+            }
+            
+            float2 KaleidoTriangle(float2 uv)
+            {
+                float2 p = (uv - 0.5) * _KaleidoScale;
+                p = Rotate2D(p, radians(_KaleidoRotation));
+            
+                const float2 n = normalize(float2(1.0, 1.73205)); // 60°
+                p = abs(p);
+            
+                float d = dot(p, n);
+                if (d > 0.5)
+                    p -= n * (d - 0.5) * 2.0;
+            
+                if (_KaleidoInvert > 0.5)
+                    p = -p;
+            
+                return p + 0.5;
+            }
+            
+            float2 KaleidoscopeUV(float2 uv)
+            {
+                if (_KaleidoEnable < 0.5)
+                    return uv;
+            
+                if (_KaleidoMode < 0.5)
+                    return KaleidoPolar(uv);
+                else if (_KaleidoMode < 1.5)
+                    return KaleidoOctagon(uv);
+                else if (_KaleidoMode < 2.5)
+                    return KaleidoSquare(uv);
+                else
+                    return KaleidoTriangle(uv);
+            }
 
             fixed4 frag (v2f i) : SV_Target
             {
@@ -596,6 +1195,28 @@ Shader "Custom/Distort"
                 
                 // Reassemble UV
                 uv = sUV + sCenter;
+                uv = DistortedBlobUV(uv);
+                
+                // Z jitter (scale)
+                uv = (uv - 0.5) * JitterZScale() + 0.5;
+                
+                // XY jitter
+                uv = JitterUV(uv);
+                
+                uv = RandomDisplaceUV(uv);
+                uv = OscillateUV(uv);
+                
+                // Z shake first (scale)
+                uv = (uv - 0.5) * Shake2ZScale() + 0.5;
+                // Rotation shake
+                uv = RotateUV(uv, Shake2Rotation());
+                // XY shake
+                uv = Shake2UV(uv);
+                uv = MirrorUV(uv, _MirrorAngle, _MirrorEnable, _MirrorInvert);
+                uv = MirrorUV(uv, _Mirror2Angle, _Mirror2Enable, _Mirror2Invert);
+                uv = MirrorUV(uv, _Mirror3Angle, _Mirror3Enable, _Mirror3Invert);
+                uv = MirrorUV(uv, _Mirror4Angle, _Mirror4Enable, _Mirror4Invert);
+                uv = KaleidoscopeUV(uv);
 
                 // ---------- True 3D Perspective Warp (Tile Aware) ----------
                 

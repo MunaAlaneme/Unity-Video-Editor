@@ -77,6 +77,16 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DistortedBlob2Evolution: 0
+    - _DistortedBlob2Mag: 0
+    - _DistortedBlob2Scatter: 0.5
+    - _DistortedBlob2Seed: 0
+    - _DistortedBlobAngle: 45
+    - _DistortedBlobEvolution: 0
+    - _DistortedBlobMag: 0
+    - _DistortedBlobSeed: 0
+    - _DistortedBlobSlack: 1
+    - _DistortedBlobSpeed: 1
     - _DstBlend: 0
     - _EnableExternalAlpha: 0
     - _FisheyeRadius: 0.75
@@ -95,12 +105,40 @@ Material:
     - _GlossyReflections: 1
     - _HorizonHeight: 0.5
     - _HorizonWarp: 0
+    - _JitterAngle: 0
+    - _JitterFreq: 24
+    - _JitterMag: 0
+    - _JitterSeed: 0
+    - _JitterSlack: 1
+    - _JitterZ: 0
+    - _KaleidoCount: 0
+    - _KaleidoEnable: 0
+    - _KaleidoInvert: 0
+    - _KaleidoMode: 0
+    - _KaleidoRotation: 360
+    - _KaleidoScale: 1
     - _MagnifyAmount: 1
     - _MagnifyRadius: 0.5
     - _MagnifySoftness: 1
     - _Metallic: 0
+    - _Mirror2Angle: 0
+    - _Mirror2Enable: 0
+    - _Mirror2Invert: 0
+    - _Mirror3Angle: 45
+    - _Mirror3Enable: 0
+    - _Mirror3Invert: 0
+    - _Mirror4Angle: 67.5
+    - _Mirror4Enable: 0
+    - _Mirror4Invert: 1
+    - _MirrorAngle: -90
+    - _MirrorEnable: 0
+    - _MirrorInvert: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OscAngle: 45
+    - _OscFreq: 3
+    - _OscMag: 0
+    - _OscType: 0
     - _Parallax: 0.02
     - _PerspDepth: 1
     - _PerspFOV: 1
@@ -116,6 +154,10 @@ Material:
     - _PolarAngleScale: 1
     - _PolarBlend: 0
     - _PolarRadius: 1
+    - _RandDispEvolution: 0
+    - _RandDispMag: 0
+    - _RandDispScatter: 0
+    - _RandDispSeed: 0
     - _RippleFalloff: 0
     - _RippleFrequency: 10
     - _RippleSpeed: 10
@@ -124,6 +166,16 @@ Material:
     - _SceneRotX: 0
     - _SceneRotY: 0
     - _SceneRotZ: 0
+    - _Shake2Angle: 45
+    - _Shake2Evolution: 0
+    - _Shake2Freq: 10
+    - _Shake2Mag: 0
+    - _Shake2RotMag: 0
+    - _Shake2RotSeed: 0
+    - _Shake2Seed: 0
+    - _Shake2Slack: 1
+    - _Shake2Speed: 1
+    - _Shake2Z: 0
     - _ShakePos: 0.1
     - _ShakeRot: 0.02
     - _ShakeScale: 0
@@ -138,7 +190,7 @@ Material:
     - _SpeedY: 3
     - _SrcBlend: 1
     - _SwirlRadius: 5
-    - _SwirlStrength: 28.541672
+    - _SwirlStrength: 0
     - _TileModeX: 1
     - _TileModeY: 1
     - _TileX: 5

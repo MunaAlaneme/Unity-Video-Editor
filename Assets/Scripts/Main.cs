@@ -24,8 +24,8 @@ public class Main : MonoBehaviour
 	{
 		//mat.SetVector("_Wave1", new Vector4(Time.time*1f, Time.time*100f, 10.0f, 0.0f) );
 		//mat.SetVector("_Wave2", new Vector4(Time.time*1f, Time.time*100f, 10.0f, 0.0f) );
-		mat.SetFloat("_SwirlRadius", 5.0f );
-		mat.SetFloat("_SwirlStrength", Time.time*25.0f - 20.0f );
+		//mat.SetFloat("_SwirlRadius", 5.0f );
+		//mat.SetFloat("_SwirlStrength", Time.time*25.0f - 20.0f );
 	}
 
 }
