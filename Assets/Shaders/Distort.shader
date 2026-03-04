@@ -82,12 +82,12 @@ Shader "Custom/Distort"
         _ShakeType ("Shake Type (0 Noise, 1 Sine, 2 Square, 3 Linear)", Int) = 0
         _ShakeSeed ("Shake Random Seed", Float) = 0
         
-        _DistortedBlobMag ("DistortedBlob Magnitude", Float) = 50
-        _DistortedBlobSpeed ("DistortedBlob Speed", Float) = 1
-        _DistortedBlobEvolution ("DistortedBlob Evolution", Float) = 0
-        _DistortedBlobSeed ("DistortedBlob Seed", Float) = 0
-        _DistortedBlobAngle ("DistortedBlob Angle (Degrees)", Float) = 45
-        _DistortedBlobSlack ("DistortedBlob Slack", Range(0,1)) = 0.25
+        _AutoShakeMag ("AutoShake Magnitude", Float) = 50
+        _AutoShakeSpeed ("AutoShake Speed", Float) = 1
+        _AutoShakeEvolution ("AutoShake Evolution", Float) = 0
+        _AutoShakeSeed ("AutoShake Seed", Float) = 0
+        _AutoShakeAngle ("AutoShake Angle (Degrees)", Float) = 45
+        _AutoShakeSlack ("AutoShake Slack", Range(0,1)) = 0.25
         
         _TunnelPhase ("Tunnel Phase", Float) = 0
         _TunnelDepth ("Tunnel Depth", Range(0.01,10)) = 0.3
@@ -120,10 +120,11 @@ Shader "Custom/Distort"
         _JitterSlack ("Jitter Slack", Range(0,1)) = 0
         _JitterZ ("Jitter Z", Float) = 0
         
-        _DistortedBlob2Mag ("Distorted Blob 2 Magnitude (Pixels)", Float) = 50
-        _DistortedBlob2Evolution ("Distorted Blob 2 Evolution", Float) = 0
-        _DistortedBlob2Seed ("Distorted Blob 2 Seed", Float) = 0
-        _DistortedBlob2Scatter ("Distorted Blob 2 Scatter", Range(0,2)) = 0.5
+        _RandomDisplaceMag ("Random Displace Magnitude (Pixels)", Float) = 50
+        _RandomDisplaceEvolution ("Random Displace Evolution", Float) = 0
+        _RandomDisplaceSeed ("Random Displace Seed", Float) = 0
+        _RandomDisplaceSpeed ("Random Displace Speed", Float) = 0
+        _RandomDisplaceScatter ("Random Displace Scatter", Range(0,2)) = 0.5
         
         _OscAngle ("Oscillate Angle (Degrees)", Float) = 45
         _OscFreq ("Oscillate Frequency", Float) = 2.0
@@ -131,7 +132,6 @@ Shader "Custom/Distort"
         _OscType ("Oscillate Wave Type (0=Sine, 1=Triangle)", Float) = 0
         
         _Shake2Mag ("Shake 2 Magnitude (Pixels)", Float) = 50
-        _Shake2Freq ("Shake 2 Frequency", Float) = 2.0
         _Shake2Evolution ("Shake 2 Evolution", Float) = 0
         _Shake2Seed ("Shake 2 Seed", Float) = 0
         _Shake2Angle ("Shake 2 Angle (Degrees)", Float) = 45
@@ -160,6 +160,10 @@ Shader "Custom/Distort"
         _KaleidoRotation ("Kaleidoscope Rotation (Degrees)", Float) = 0
         _KaleidoScale ("Kaleidoscope Scale", Float) = 1
         _KaleidoInvert ("Kaleidoscope Invert", Float) = 0
+        
+        _ShakeMBEnable ("Shake Motion Blur Enable", Float) = 0
+        _ShakeMBStrength ("Motion Blur Strength", Range(0,2)) = 1
+        _ShakeMBSamples ("Motion Blur Samples", Range(2,16)) = 8
     }
     SubShader
     {
@@ -258,6 +262,9 @@ Shader "Custom/Distort"
             float4 _ShakeCenter;
             int _ShakeType;
             float _ShakeSeed;
+            float _ShakeMBEnable;
+            float _ShakeMBStrength;
+            int _ShakeMBSamples;
             
             float _TunnelPhase;
             float _TunnelDepth;
@@ -282,12 +289,12 @@ Shader "Custom/Distort"
             float _SceneRotY;
             float _SceneRotZ;
             
-            float _DistortedBlobMag;
-            float _DistortedBlobSpeed;
-            float _DistortedBlobEvolution;
-            float _DistortedBlobSeed;
-            float _DistortedBlobAngle;
-            float _DistortedBlobSlack;
+            float _AutoShakeMag;
+            float _AutoShakeSpeed;
+            float _AutoShakeEvolution;
+            float _AutoShakeSeed;
+            float _AutoShakeAngle;
+            float _AutoShakeSlack;
             
             float _JitterAngle;
             float _JitterFreq;
@@ -296,10 +303,11 @@ Shader "Custom/Distort"
             float _JitterSlack;
             float _JitterZ;
             
-            float _DistortedBlob2Mag;
-            float _DistortedBlob2Evolution;
-            float _DistortedBlob2Seed;
-            float _DistortedBlob2Scatter;
+            float _RandomDisplaceMag;
+            float _RandomDisplaceEvolution;
+            float _RandomDisplaceSeed;
+            float _RandomDisplaceSpeed;
+            float _RandomDisplaceScatter;
             
             float _OscAngle;
             float _OscFreq;
@@ -307,7 +315,6 @@ Shader "Custom/Distort"
             float _OscType;
             
             float _Shake2Mag;
-            float _Shake2Freq;
             float _Shake2Evolution;
             float _Shake2Seed;
             float _Shake2Angle;
@@ -357,14 +364,9 @@ Shader "Custom/Distort"
                 return o;
             }
             
-            float2 RotateCoord(float2 st, float angle)
+            float FrameDelta()
             {
-                float s = sin(angle);
-                float c = cos(angle);
-                return float2(
-                    st.x * c - st.y * s,
-                    st.x * s + st.y * c
-                );
+                return 1.0 / max(_ScreenParams.w, 60.0);
             }
 
             float hash(float n)
@@ -509,6 +511,29 @@ Shader "Custom/Distort"
                 // Smoothstep interpolation
                 float u = f * f * (3.0 - 2.0 * f);
                 return lerp(a, b, u);
+            }
+            
+            fixed4 MotionBlurSample(
+                sampler2D tex,
+                float2 uv,
+                float2 velocity
+            )
+            {
+                int samples = (int)_ShakeMBSamples;
+                float strength = _ShakeMBStrength;
+            
+                fixed4 col = 0;
+                float total = 0;
+            
+                for (int i = 0; i < samples; i++)
+                {
+                    float t = (samples <= 1) ? 0 : (float)i / (samples - 1);
+                    float2 offset = velocity * (t - 0.5) * strength;
+                    col += tex2D(tex, uv + offset);
+                    total += 1.0;
+                }
+            
+                return col / total;
             }
             
             float ShakeSignal(float t, int type, float seed)
@@ -713,28 +738,28 @@ Shader "Custom/Distort"
                 ));
             }
             
-            float2 DistortedBlobUV(float2 uv)
+            float2 AutoShakeUV(float2 uv)
             {
-                float time = _DistortedBlobEvolution + (_Time.y * _DistortedBlobSpeed) - _DistortedBlobSpeed;
+                float time = _AutoShakeEvolution + (_Time.y * _AutoShakeSpeed) - _AutoShakeSpeed;
             
-                float angle = radians(_DistortedBlobAngle);
+                float angle = radians(_AutoShakeAngle);
                 float s = sin(angle);
                 float c = cos(angle);
             
                 float dx = snoise(float3(
-                    uv.x + _DistortedBlobSeed * 54623.245,
-                    uv.y,
-                    time + _DistortedBlobSeed * 49235.3198
+                    _AutoShakeSeed * 54623.245,
+                    0,
+                    time + _AutoShakeSeed * 49235.3198
                 ));
             
                 float dy = snoise(float3(
-                    uv.x,
-                    uv.y + _DistortedBlobSeed * 8723.5647,
-                    time + 7468.329 + _DistortedBlobSeed * 19337.9404
+                    0,
+                    _AutoShakeSeed * 8723.5647,
+                    time + 7468.329 + _AutoShakeSeed * 19337.9404
                 ));
             
-                dx *= _DistortedBlobMag;
-                dy *= _DistortedBlobMag * _DistortedBlobSlack;
+                dx *= _AutoShakeMag;
+                dy *= _AutoShakeMag * _AutoShakeSlack;
             
                 float rx = dx * c - dy * s;
                 float ry = dx * s + dy * c;
@@ -807,18 +832,18 @@ Shader "Custom/Distort"
                 float2 px = uv * _ScreenParams.xy;
             
                 float dx = snoise(float3(
-                    px.x * _DistortedBlob2Scatter / 50.0 + _DistortedBlob2Seed * 54623.245,
-                    px.y * _DistortedBlob2Scatter / 500.0,
-                    _DistortedBlob2Evolution + _DistortedBlob2Seed * 49235.3198
+                    _RandomDisplaceScatter / 50.0 + _RandomDisplaceSeed * 54623.245,
+                    _RandomDisplaceScatter / 500.0,
+                    _RandomDisplaceEvolution + (_RandomDisplaceSpeed*_Time.y) + _RandomDisplaceSeed * 49235.3198
                 ));
             
                 float dy = snoise(float3(
-                    px.x * _DistortedBlob2Scatter / 50.0,
-                    px.y * _DistortedBlob2Scatter / 500.0 + _DistortedBlob2Seed * 8723.5647,
-                    _DistortedBlob2Evolution + 7468.329 + _DistortedBlob2Seed * 19337.9404
+                    _RandomDisplaceScatter / 50.0,
+                    _RandomDisplaceScatter / 500.0 + _RandomDisplaceSeed * 8723.5647,
+                    _RandomDisplaceEvolution + (_RandomDisplaceSpeed*_Time.y) + 7468.329 + _RandomDisplaceSeed * 19337.9404
                 ));
             
-                float2 offset = float2(dx, dy) * _DistortedBlob2Mag;
+                float2 offset = float2(dx, dy) * _RandomDisplaceMag;
             
                 // Convert pixels → UV
                 return uv + offset / _ScreenParams.xy;
@@ -933,43 +958,39 @@ Shader "Custom/Distort"
                 return 130.0 * dot(m, g);
             }
             
-            float Shake2Phase()
+            float2 Shake2Offset(float2 uv, float time)
             {
-                return _Shake2Evolution + _Shake2Freq + (_Shake2Speed*_Time.y);
-            }
+                float evolution = _Shake2Evolution + (time * _Shake2Speed) - _Shake2Speed;
             
-            float2 Shake2UV(float2 uv)
-            {
-                float phase = Shake2Phase();
-            
-                float angle = radians(_Shake2Angle);
-                float s = sin(angle);
-                float c = cos(angle);
+                float a = radians(_Shake2Angle);
+                float s = sin(a);
+                float c = cos(a);
             
                 float dx = snoise2(float2(
-                    phase,
-                    _Shake2Seed * 49235.3198
+                    _Shake2Seed * 54623.245,
+                    evolution + _Shake2Seed * 49235.3198
                 ));
             
                 float dy = snoise2(float2(
-                    phase + 7468.329,
-                    _Shake2Seed * 19337.9404
+                    _Shake2Seed * 8723.5647,
+                    evolution + 7468.329 + _Shake2Seed * 19337.9404
                 ));
             
                 dx *= _Shake2Mag;
                 dy *= _Shake2Mag * _Shake2Slack;
             
-                float rx = dx * c - dy * s;
-                float ry = dx * s + dy * c;
+                float2 offset;
+                offset.x = dx * c - dy * s;
+                offset.y = dx * s + dy * c;
             
-                return uv + float2(rx, ry) / _ScreenParams.xy;
+                return offset / _ScreenParams.xy;
             }
             
-            float Shake2ZScale()
+            float Shake2ZScale(float time)
             {
                 if (_Shake2Z <= 0) return 1.0;
             
-                float phase = Shake2Phase();
+                float phase = _Shake2Evolution + (time * _Shake2Speed) - _Shake2Speed;
             
                 float dz = snoise2(float2(
                     phase + 14192.277,
@@ -993,11 +1014,11 @@ Shader "Custom/Distort"
                 return uv;
             }
             
-            float Shake2Rotation()
+            float Shake2Rotation(float time)
             {
                 if (_Shake2RotMag == 0) return 0;
             
-                float phase = _Shake2Evolution + _Shake2Freq + (_Shake2Speed*_Time.y);
+                float phase = _Shake2Evolution + (time * _Shake2Speed) - _Shake2Speed;
             
                 float r = snoise2(float2(
                     phase + 9821.441,
@@ -1195,7 +1216,7 @@ Shader "Custom/Distort"
                 
                 // Reassemble UV
                 uv = sUV + sCenter;
-                uv = DistortedBlobUV(uv);
+                uv = AutoShakeUV(uv);
                 
                 // Z jitter (scale)
                 uv = (uv - 0.5) * JitterZScale() + 0.5;
@@ -1207,11 +1228,21 @@ Shader "Custom/Distort"
                 uv = OscillateUV(uv);
                 
                 // Z shake first (scale)
-                uv = (uv - 0.5) * Shake2ZScale() + 0.5;
+                float timeNow = _Time.y;
+                float dt = FrameDelta();
+                uv = (uv - 0.5) * Shake2ZScale(timeNow) + 0.5;
                 // Rotation shake
-                uv = RotateUV(uv, Shake2Rotation());
+                uv = RotateUV(uv, Shake2Rotation(timeNow));
                 // XY shake
-                uv = Shake2UV(uv);
+                
+                float2 offsetNow = Shake2Offset(uv, timeNow);
+                float2 offsetPrev = Shake2Offset(uv, timeNow - dt);
+                
+                float2 velocity = offsetNow - offsetPrev;
+                
+                // Apply offset
+                uv += offsetNow;
+                
                 uv = MirrorUV(uv, _MirrorAngle, _MirrorEnable, _MirrorInvert);
                 uv = MirrorUV(uv, _Mirror2Angle, _Mirror2Enable, _Mirror2Invert);
                 uv = MirrorUV(uv, _Mirror3Angle, _Mirror3Enable, _Mirror3Invert);
@@ -1395,13 +1426,18 @@ Shader "Custom/Distort"
                 float glitchOffset = (hash(blockY * 13.1 + t) - 0.5) * glitchMask * 0.1;
                 
                 // Apply horizontal tear
+                fixed4 col;
                 float2 glitchUV = uv;
                 glitchUV.x += glitchOffset;
                 float glitchr = tex2D(_MainTex, glitchUV + float2(_GlitchRGB * sin(radians(_GlitchRGBRotation)), _GlitchRGB * cos(radians(_GlitchRGBRotation)) )).r;
                 float glitchg = tex2D(_MainTex, glitchUV).g;
                 float glitchb = tex2D(_MainTex, glitchUV - float2(_GlitchRGB * sin(radians(_GlitchRGBRotation)), _GlitchRGB * cos(radians(_GlitchRGBRotation)) )).b;
                 
-                fixed4 col = fixed4(glitchr, glitchg, glitchb, 1);
+                col = fixed4(glitchr, glitchg, glitchb, 1);
+                if (_ShakeMBEnable > 0.5)
+                {
+                    col = MotionBlurSample(_MainTex, uv, velocity);
+                }
                 uv = glitchUV;
                 // ---------- Trail ----------
                 float2 dir = normalize(_TrailDirection.xy);

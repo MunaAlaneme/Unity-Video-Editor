@@ -74,16 +74,22 @@ Material:
     m_Ints: []
     m_Floats:
     - _Amplitude: 0.02
+    - _AutoShakeAngle: 45
+    - _AutoShakeEvolution: 0
+    - _AutoShakeMag: 0
+    - _AutoShakeSeed: 0
+    - _AutoShakeSlack: 0.25
+    - _AutoShakeSpeed: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DistortedBlob2Evolution: 0
-    - _DistortedBlob2Mag: 0
+    - _DistortedBlob2Mag: 1000
     - _DistortedBlob2Scatter: 0.5
     - _DistortedBlob2Seed: 0
     - _DistortedBlobAngle: 45
     - _DistortedBlobEvolution: 0
-    - _DistortedBlobMag: 0
+    - _DistortedBlobMag: 1000
     - _DistortedBlobSeed: 0
     - _DistortedBlobSlack: 1
     - _DistortedBlobSpeed: 1
@@ -97,7 +103,7 @@ Material:
     - _Frequency: 10
     - _GlitchBlockSize: 40
     - _GlitchRGB: 0
-    - _GlitchRGBRotation: 0
+    - _GlitchRGBRotation: 45
     - _GlitchSpeed: 10
     - _GlitchStrength: 0
     - _GlossMapScale: 1
@@ -158,6 +164,11 @@ Material:
     - _RandDispMag: 0
     - _RandDispScatter: 0
     - _RandDispSeed: 0
+    - _RandomDisplaceEvolution: 0
+    - _RandomDisplaceMag: 0
+    - _RandomDisplaceScatter: 0.5
+    - _RandomDisplaceSeed: 0
+    - _RandomDisplaceSpeed: 0
     - _RippleFalloff: 0
     - _RippleFrequency: 10
     - _RippleSpeed: 10
@@ -166,7 +177,7 @@ Material:
     - _SceneRotX: 0
     - _SceneRotY: 0
     - _SceneRotZ: 0
-    - _Shake2Angle: 45
+    - _Shake2Angle: 0
     - _Shake2Evolution: 0
     - _Shake2Freq: 10
     - _Shake2Mag: 0
@@ -176,6 +187,9 @@ Material:
     - _Shake2Slack: 1
     - _Shake2Speed: 1
     - _Shake2Z: 0
+    - _ShakeMBEnable: 0
+    - _ShakeMBSamples: 16
+    - _ShakeMBStrength: 2
     - _ShakePos: 0.1
     - _ShakeRot: 0.02
     - _ShakeScale: 0
@@ -207,11 +221,11 @@ Material:
     - _TrailEndRot: 0
     - _TrailEndSize: 1
     - _TrailHueShift: 20
-    - _TrailLength: 0.2
+    - _TrailLength: 0
     - _TrailStartAlpha: 1
     - _TrailStartRot: 0
     - _TrailStartSize: 1
-    - _TrailSteps: 30
+    - _TrailSteps: 0
     - _TrailStrength: 0
     - _TrailTransformRot: 0
     - _TrailTransformScale: 0
