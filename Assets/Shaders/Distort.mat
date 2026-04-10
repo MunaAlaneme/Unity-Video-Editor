@@ -180,14 +180,14 @@ Material:
     - _Shake2Angle: 0
     - _Shake2Evolution: 0
     - _Shake2Freq: 10
-    - _Shake2Mag: 0
+    - _Shake2Mag: 500
     - _Shake2RotMag: 0
     - _Shake2RotSeed: 0
     - _Shake2Seed: 0
     - _Shake2Slack: 1
     - _Shake2Speed: 1
     - _Shake2Z: 0
-    - _ShakeMBEnable: 0
+    - _ShakeMBEnable: 1
     - _ShakeMBSamples: 16
     - _ShakeMBStrength: 2
     - _ShakePos: 0.1
